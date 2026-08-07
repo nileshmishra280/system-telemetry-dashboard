@@ -31,13 +31,26 @@ function TabPane({ file }) {
 
   if (kind === 'pdf') {
     return (
-      <iframe
-        key={file.url}
-        src={file.url}
-        title={file.name}
-        className="tab-iframe"
-        allow="fullscreen"
-      />
+      <div className="pdf-viewer-wrap">
+        <div className="pdf-viewer-toolbar">
+          <span className="pdf-viewer-name">📄 {file.name}</span>
+          <div className="pdf-viewer-actions">
+            <a href={file.url} target="_blank" rel="noreferrer" className="pdf-action-btn">
+              ↗ Open in Browser
+            </a>
+            <a href={file.url} download={file.name} className="pdf-action-btn">
+              ↓ Download
+            </a>
+          </div>
+        </div>
+        <iframe
+          key={file.url}
+          src={`${file.url}#toolbar=1&navpanes=1&scrollbar=1&view=FitH`}
+          title={file.name}
+          className="pdf-iframe"
+          allow="fullscreen"
+        />
+      </div>
     );
   }
   if (kind === 'image') {

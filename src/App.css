@@ -485,6 +485,66 @@ body.dark .type-office { background: #2a1a00; color: #fa0; }
 .delete-btn { border-color: transparent; color: var(--text3); padding: 4px 6px; }
 .delete-btn:hover { color: #d33; border-color: #d33; background: transparent; }
 
+/* ── PDF VIEWER ── */
+.pdf-viewer-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #525659;
+}
+
+.pdf-viewer-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 14px;
+  background: #3a3a3a;
+  border-bottom: 1px solid #222;
+  flex-shrink: 0;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pdf-viewer-name {
+  font-size: 11px;
+  color: #ccc;
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.pdf-viewer-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.pdf-action-btn {
+  background: transparent;
+  border: 1px solid #555;
+  color: #ccc;
+  padding: 3px 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.pdf-action-btn:hover { border-color: #aaa; color: #fff; }
+
+.pdf-iframe {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: #525659;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   .sidebar { width: 185px; }
