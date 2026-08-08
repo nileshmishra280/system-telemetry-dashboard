@@ -542,93 +542,89 @@ body.dark .type-office { background: #2a1a00; color: #fa0; }
 }
 
 /* ── DECOY SCREEN ── */
-.decoy-btn {
-  background: transparent;
-  border: 1px solid #3a3a3a;
-  color: #666;
-  padding: 2px 7px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: inherit;
-  border-radius: 2px;
-}
-.decoy-btn:hover { border-color: #666; color: #999; }
-
 .decoy-overlay {
   position: fixed;
   inset: 0;
   z-index: 2000;
-  background: #f4f4f2;
-  cursor: pointer;
+  background: #f2f2f0;
   overflow: auto;
+  /* NO click-to-close — only the invisible dot closes it */
 }
-body.dark .decoy-overlay { background: #1a1a1a; }
+body.dark .decoy-overlay { background: #141414; }
 
 .decoy-screen {
-  max-width: 860px;
+  max-width: 820px;
   margin: 0 auto;
-  padding: 32px 24px;
+  padding: 28px 22px;
   font-family: 'Courier New', monospace;
-  color: #333;
-  pointer-events: none;
+  pointer-events: none; /* screen itself not clickable */
 }
-body.dark .decoy-screen { color: #aaa; }
 
-.decoy-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 16px;
-  background: #2a2a2a;
-  color: #ccc;
-  font-size: 12px;
-  margin-bottom: 24px;
-  letter-spacing: .05em;
+.decoy-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 14px; background: #2a2a2a; color: #bbb;
+  font-size: 11px; margin-bottom: 22px; letter-spacing: .05em;
 }
-.decoy-status { color: #6d6; font-size: 11px; }
-
-.decoy-body { display: flex; flex-direction: column; gap: 20px; }
-
+.decoy-pill {
+  font-size: 10px; background: #1a3a1a; color: #5d5;
+  padding: 2px 8px; border-radius: 2px; letter-spacing: .06em;
+}
+.decoy-body { display: flex; flex-direction: column; gap: 16px; }
 .decoy-section {
-  border: 1px solid #ccc;
-  padding: 14px 16px;
-  background: #fff;
+  border: 1px solid #d0d0cc; padding: 12px 14px; background: #fafaf8;
 }
-body.dark .decoy-section { border-color: #2a2a2a; background: #111; }
-
+body.dark .decoy-section { border-color: #252525; background: #0e0e0e; }
 .decoy-label {
-  font-size: 10px;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: #888;
-  margin-bottom: 10px;
+  font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
+  color: #aaa; margin-bottom: 8px;
 }
-
 .decoy-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  padding: 4px 0;
-  border-bottom: 1px solid #eee;
+  display: flex; justify-content: space-between;
+  font-size: 12px; padding: 4px 0; border-bottom: 1px solid #eee;
 }
-body.dark .decoy-row { border-bottom-color: #222; }
-.decoy-val { color: #555; }
-body.dark .decoy-val { color: #888; }
+body.dark .decoy-row { border-bottom-color: #1e1e1e; }
+.decoy-val { color: #666; }
+body.dark .decoy-val { color: #777; }
+.decoy-val.ok { color: #393; }
+.decoy-val.dim { color: #aaa; }
+.decoy-log { font-size: 11px; padding: 3px 0; color: #666; border-bottom: 1px solid #f0f0ee; }
+body.dark .decoy-log { color: #555; border-bottom-color: #1a1a1a; }
 
-.decoy-log {
-  font-size: 11px;
-  padding: 3px 0;
-  color: #555;
-  border-bottom: 1px solid #f0f0f0;
+/* Invisible dismiss dot — only way to close decoy, bottom-right corner */
+.decoy-dismiss-dot {
+  position: fixed;
+  bottom: 8px;
+  right: 8px;
+  width: 6px;
+  height: 6px;
+  background: transparent;
+  border: none;
+  cursor: default;
+  z-index: 2001;
+  padding: 0;
+  pointer-events: all;
+  opacity: 0;
 }
-body.dark .decoy-log { color: #666; border-bottom-color: #1e1e1e; }
 
-.decoy-footer {
-  text-align: center;
-  font-size: 11px;
-  color: #aaa;
-  padding: 12px 0;
-  letter-spacing: .05em;
+/* Invisible decoy trigger — also a 6px dot, placed in sidebar/tab bar */
+.decoy-trigger-btn {
+  width: 6px;
+  height: 6px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: default;
+  opacity: 0;
+  pointer-events: all;
+  flex-shrink: 0;
+}
+
+/* Card type badge — small single letter, not revealing */
+.card-type-badge {
+  display: inline-block;
+  width: 20px; height: 20px; line-height: 20px;
+  text-align: center; font-size: 11px; font-weight: bold;
+  border-radius: 2px; flex-shrink: 0; margin-bottom: 4px;
 }
 
 /* ── RESPONSIVE ── */
