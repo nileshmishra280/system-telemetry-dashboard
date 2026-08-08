@@ -137,10 +137,26 @@ export default function Dashboard({ onTriggerDecoy }) {
 
   useEffect(() => {
     fetchDirs();
-    const ch = supabase.channel('dir-rt')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'directories' }, fetchDirs)
-      .subscribe();
-    return () => supabase.removeChannel(ch);
+
+    // Polling fallback — refetch every 4 seconds regardless of realtime status
+    const poll = setInterval(fetchDirs, 4000);
+
+    // Try realtime — if it fails, polling covers it silently
+    let ch;
+    try {
+      ch = supabase.channel('dir-rt')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'directories' }, fetchDirs)
+        .subscribe((status) => {
+          if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+            try { supabase.removeChannel(ch); } catch {}
+          }
+        });
+    } catch {}
+
+    return () => {
+      clearInterval(poll);
+      if (ch) try { supabase.removeChannel(ch); } catch {}
+    };
   }, []);
 
   async function fetchDirs() {
