@@ -485,60 +485,39 @@ body.dark .type-office { background: #2a1a00; color: #fa0; }
 .delete-btn { border-color: transparent; color: var(--text3); padding: 4px 6px; }
 .delete-btn:hover { color: #d33; border-color: #d33; background: transparent; }
 
-/* ── PDF VIEWER ── */
+/* ── PDF VIEWER (native embed) ── */
 .pdf-viewer-wrap {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: #404040;
+  flex: 1; display: flex; flex-direction: column;
+  overflow: hidden; background: #404040;
 }
-
 .pdf-viewer-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 12px;
-  background: #2a2a2a;
-  border-bottom: 1px solid #111;
-  flex-shrink: 0;
-  gap: 10px;
-  min-height: 30px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 12px; background: #222; border-bottom: 1px solid #111;
+  flex-shrink: 0; gap: 6px; flex-wrap: wrap; min-height: 30px;
 }
-
 .pdf-viewer-name {
-  font-size: 11px;
-  color: #bbb;
-  font-family: 'Courier New', monospace;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
+  font-size: 11px; color: #bbb; font-family: 'Courier New', monospace;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  flex: 1; min-width: 0;
 }
-
-.pdf-viewer-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
+.pdf-viewer-actions { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; align-items: center; }
 .pdf-action-btn {
-  background: transparent;
-  border: 1px solid #444;
-  color: #aaa;
-  padding: 2px 9px;
-  font-family: 'Courier New', monospace;
-  font-size: 10px;
-  cursor: pointer;
-  text-decoration: none;
-  border-radius: 2px;
-  white-space: nowrap;
+  background: transparent; border: 1px solid #444; color: #aaa;
+  padding: 2px 8px; font-family: 'Courier New', monospace;
+  font-size: 10px; cursor: pointer; text-decoration: none;
+  border-radius: 2px; white-space: nowrap;
 }
 .pdf-action-btn:hover { border-color: #888; color: #eee; }
 
+/* embed fills full remaining height — cleanest PDF render */
+.pdf-embed {
+  flex: 1; width: 100%; height: 100%;
+  border: none; display: block; min-height: 0;
+}
+/* iframe fallback for .doc files */
 .pdf-iframe {
-  flex: 1;
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-  min-height: 0;
+  flex: 1; width: 100%; height: 100%;
+  border: none; display: block; min-height: 0;
 }
 
 /* ── DECOY SCREEN ── */

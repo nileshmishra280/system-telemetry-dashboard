@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabase';
 
-// No file/PDF/folder terms anywhere visible to casual observer
 function detectType(filename, mimeType) {
   const n = (filename || '').toLowerCase();
   if (mimeType === 'application/pdf' || n.endsWith('.pdf')) return 'pdf';
@@ -11,13 +10,33 @@ function detectType(filename, mimeType) {
   return 'bin';
 }
 
-// Neutral single-char type indicator — not revealing
 function typeTag(t) {
   if (t === 'pdf') return 'P';
   if (t === 'img') return 'I';
   if (t === 'txt') return 'T';
   if (t === 'doc') return 'D';
   return 'B';
+}
+
+// Best PDF viewer: <embed> — cleanest, no toolbar chrome, full-height, works natively
+function PdfViewer({ file }) {
+  return (
+    <div className="pdf-viewer-wrap">
+      <div className="pdf-viewer-toolbar">
+        <span className="pdf-viewer-name">{file.name}</span>
+        <div className="pdf-viewer-actions">
+          <a href={file.url} target="_blank" rel="noreferrer" className="pdf-action-btn">↗ Open</a>
+          <a href={file.url} download={file.name} className="pdf-action-btn">↓ Save</a>
+        </div>
+      </div>
+      <embed
+        key={file.url}
+        src={file.url}
+        type="application/pdf"
+        className="pdf-embed"
+      />
+    </div>
+  );
 }
 
 function TabPane({ file }) {
@@ -30,26 +49,8 @@ function TabPane({ file }) {
     }
   }, [file.url, kind]);
 
-  if (kind === 'pdf') {
-    return (
-      <div className="pdf-viewer-wrap">
-        <div className="pdf-viewer-toolbar">
-          <span className="pdf-viewer-name">{file.name}</span>
-          <div className="pdf-viewer-actions">
-            <a href={file.url} target="_blank" rel="noreferrer" className="pdf-action-btn">↗ View</a>
-            <a href={file.url} download={file.name} className="pdf-action-btn">↓ Save</a>
-          </div>
-        </div>
-        <iframe
-          key={file.url}
-          src={`${file.url}#toolbar=1&navpanes=0&scrollbar=1&view=FitH&zoom=page-width`}
-          title={file.name}
-          className="pdf-iframe"
-          allow="fullscreen"
-        />
-      </div>
-    );
-  }
+  if (kind === 'pdf') return <PdfViewer file={file} />;
+
   if (kind === 'img') {
     return <div className="tab-img-wrap"><img src={file.url} alt="" className="tab-img" /></div>;
   }
@@ -74,10 +75,8 @@ function TabPane({ file }) {
   );
 }
 
-// Picker — shown when + is clicked in tab bar
 function Picker({ directories, openTab, onClose }) {
   const [expanded, setExpanded] = useState(null);
-
   return (
     <>
       <div className="picker-backdrop" onClick={onClose} />
@@ -93,7 +92,7 @@ function Picker({ directories, openTab, onClose }) {
               >
                 <span>{expanded === dir.id ? '▾' : '▸'}</span>
                 <span className="picker-dir-name">{dir.name}</span>
-                <span className="picker-dir-count">{dir.assets?.length ?? dir.files?.length ?? 0}</span>
+                <span className="picker-dir-count">{(dir.assets ?? dir.files)?.length ?? 0}</span>
               </button>
               {expanded === dir.id && (
                 <ul className="picker-file-list">
@@ -127,21 +126,15 @@ export default function Dashboard({ onTriggerDecoy }) {
   const [uploadProgress, setUploadProgress] = useState(null);
   const [uploadError, setUploadError] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
-
   const [openTabs, setOpenTabs] = useState([]);
   const [activeTabId, setActiveTabId] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
-
   const fileInputRef = useRef(null);
   const tabsOpen = openTabs.length > 0;
 
   useEffect(() => {
     fetchDirs();
-
-    // Polling fallback — refetch every 4 seconds regardless of realtime status
     const poll = setInterval(fetchDirs, 4000);
-
-    // Try realtime — if it fails, polling covers it silently
     let ch;
     try {
       ch = supabase.channel('dir-rt')
@@ -152,7 +145,6 @@ export default function Dashboard({ onTriggerDecoy }) {
           }
         });
     } catch {}
-
     return () => {
       clearInterval(poll);
       if (ch) try { supabase.removeChannel(ch); } catch {}
@@ -191,6 +183,10 @@ export default function Dashboard({ onTriggerDecoy }) {
     setNewDirName('');
   }
 
+  function extractPath(url) {
+    try { const p = url.split('/uploads/'); return p[1] ? decodeURIComponent(p[1]) : null; } catch { return null; }
+  }
+
   async function handleDeleteDir(dir, e) {
     e.stopPropagation();
     if (!window.confirm(`Remove stream "${dir.name}"?`)) return;
@@ -203,10 +199,6 @@ export default function Dashboard({ onTriggerDecoy }) {
     if (selectedDir?.id === dir.id) setSelectedDir(null);
     const urls = new Set(files.map(f => f.url));
     setOpenTabs(p => p.filter(t => !urls.has(t.file.url)));
-  }
-
-  function extractPath(url) {
-    try { const p = url.split('/uploads/'); return p[1] ? decodeURIComponent(p[1]) : null; } catch { return null; }
   }
 
   async function handleFileSelect(e) {
@@ -265,16 +257,11 @@ export default function Dashboard({ onTriggerDecoy }) {
             <button className="tab-add-btn" onClick={() => setShowPicker(p => !p)}>
               {showPicker ? '✕' : '+'}
             </button>
-            {/* Invisible decoy trigger — tiny dot far right of tab bar */}
             <button className="decoy-trigger-btn" onClick={onTriggerDecoy} aria-hidden="true" tabIndex={-1} />
           </div>
 
           {showPicker && (
-            <Picker
-              directories={directories}
-              openTab={openTab}
-              onClose={() => setShowPicker(false)}
-            />
+            <Picker directories={directories} openTab={openTab} onClose={() => setShowPicker(false)} />
           )}
 
           <div className="reader-body">
@@ -294,8 +281,7 @@ export default function Dashboard({ onTriggerDecoy }) {
           </button>
 
           {sidebarOpen && (
-            <aside className="sidebar">
-              {/* Invisible decoy trigger — top-right corner of sidebar */}
+            <aside className="sidebar" style={{ position: 'relative' }}>
               <button className="decoy-trigger-btn" onClick={onTriggerDecoy} aria-hidden="true" tabIndex={-1} style={{ position: 'absolute', top: 6, right: 6 }} />
               <p className="sidebar-label">NODE STREAMS</p>
               <form onSubmit={handleCreateDir} className="dir-form">
@@ -327,12 +313,9 @@ export default function Dashboard({ onTriggerDecoy }) {
               <>
                 <div className="content-header">
                   <span className="content-title">{activeDir.name}</span>
-                  <button className="upload-btn" onClick={() => fileInputRef.current.click()}>
-                    ↑ Push Record
-                  </button>
+                  <button className="upload-btn" onClick={() => fileInputRef.current.click()}>↑ Push Record</button>
                   <input type="file" accept="*/*" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileSelect} />
                 </div>
-
                 {uploadProgress !== null && (
                   <div className="progress-bar-wrap">
                     <div className="progress-bar" style={{ width: `${uploadProgress}%` }} />
@@ -340,7 +323,6 @@ export default function Dashboard({ onTriggerDecoy }) {
                   </div>
                 )}
                 {uploadError && <p className="inline-error">{uploadError}</p>}
-
                 {activeFiles.length === 0 ? (
                   <p className="no-files">No records in this stream.</p>
                 ) : (
