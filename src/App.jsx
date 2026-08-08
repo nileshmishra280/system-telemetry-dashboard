@@ -3,12 +3,52 @@ import { supabase } from './supabase';
 import Dashboard from './Dashboard';
 import './App.css';
 
+// Fake decoy screen — looks like a boring system diagnostics page
+function DecoyScreen({ onDismiss }) {
+  return (
+    <div className="decoy-overlay" onClick={onDismiss}>
+      <div className="decoy-screen">
+        <div className="decoy-header">
+          <span>System Diagnostics — Node Configuration Utility v3.1</span>
+          <span className="decoy-status">● RUNNING</span>
+        </div>
+        <div className="decoy-body">
+          <div className="decoy-section">
+            <p className="decoy-label">PROCESS MONITOR</p>
+            <div className="decoy-row"><span>svc_telemetry.exe</span><span className="decoy-val">Active — PID 4821</span></div>
+            <div className="decoy-row"><span>node_config_agent.exe</span><span className="decoy-val">Active — PID 5102</span></div>
+            <div className="decoy-row"><span>log_sync_daemon.exe</span><span className="decoy-val">Idle — PID 3344</span></div>
+            <div className="decoy-row"><span>net_monitor.exe</span><span className="decoy-val">Active — PID 2201</span></div>
+          </div>
+          <div className="decoy-section">
+            <p className="decoy-label">SYSTEM RESOURCE USAGE</p>
+            <div className="decoy-row"><span>CPU Load</span><span className="decoy-val">12.4%</span></div>
+            <div className="decoy-row"><span>Memory</span><span className="decoy-val">4.2 GB / 16.0 GB</span></div>
+            <div className="decoy-row"><span>Disk I/O</span><span className="decoy-val">Read: 2.1 MB/s</span></div>
+            <div className="decoy-row"><span>Network</span><span className="decoy-val">TX: 0.4 MB/s — RX: 1.2 MB/s</span></div>
+          </div>
+          <div className="decoy-section">
+            <p className="decoy-label">RECENT SYNC EVENTS</p>
+            <div className="decoy-log">[INFO] 2026-08-08 01:14:22 — Config node handshake complete</div>
+            <div className="decoy-log">[INFO] 2026-08-08 01:14:20 — Telemetry batch dispatched (312 records)</div>
+            <div className="decoy-log">[WARN] 2026-08-08 01:13:58 — Retry attempt 2/3 on upstream endpoint</div>
+            <div className="decoy-log">[INFO] 2026-08-08 01:13:45 — Log rotation completed</div>
+            <div className="decoy-log">[INFO] 2026-08-08 01:13:30 — Node authentication verified</div>
+          </div>
+          <div className="decoy-footer">Click anywhere to resume session</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [tokenInput, setTokenInput] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [dark, setDark] = useState(() => localStorage.getItem('std_theme') === 'dark');
+  const [showDecoy, setShowDecoy] = useState(false);
 
   // Token drawer
   const [showDrawer, setShowDrawer] = useState(false);
@@ -101,18 +141,27 @@ export default function App() {
 
   return (
     <div className="app-root">
+      {/* Decoy screen — covers everything */}
+      {showDecoy && <DecoyScreen onDismiss={() => setShowDecoy(false)} />}
+
       <header className="app-header">
         <span className="app-title">CONFIG-NODE-BETA / telemetry-sync</span>
         <div className="header-actions">
+          {/* Panic / decoy button — discreet, always visible */}
+          <button
+            className="decoy-btn"
+            onClick={() => setShowDecoy(true)}
+            title="System Diagnostics"
+          >
+            ⬡
+          </button>
           <button className="icon-btn" title={dark ? 'Light mode' : 'Dark mode'} onClick={() => setDark(d => !d)}>
             {dark ? '☀️' : '🌙'}
           </button>
           <button className="token-btn" onClick={() => { setShowDrawer(true); setDrawerError(''); setDrawerSuccess(false); }}>
             ⚙️ Update Token
           </button>
-          <button className="logout-btn" onClick={handleLogout} title="Logout">
-            ⏏ Logout
-          </button>
+          <button className="logout-btn" onClick={handleLogout}>⏏ Logout</button>
         </div>
       </header>
 

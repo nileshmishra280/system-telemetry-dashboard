@@ -35,17 +35,13 @@ function TabPane({ file }) {
         <div className="pdf-viewer-toolbar">
           <span className="pdf-viewer-name">📄 {file.name}</span>
           <div className="pdf-viewer-actions">
-            <a href={file.url} target="_blank" rel="noreferrer" className="pdf-action-btn">
-              ↗ Open in Browser
-            </a>
-            <a href={file.url} download={file.name} className="pdf-action-btn">
-              ↓ Download
-            </a>
+            <a href={file.url} target="_blank" rel="noreferrer" className="pdf-action-btn">↗ Open in Browser</a>
+            <a href={file.url} download={file.name} className="pdf-action-btn">↓ Download</a>
           </div>
         </div>
         <iframe
           key={file.url}
-          src={`${file.url}#toolbar=1&navpanes=1&scrollbar=1&view=FitH`}
+          src={`${file.url}#toolbar=1&navpanes=0&scrollbar=1&view=FitH&zoom=page-width`}
           title={file.name}
           className="pdf-iframe"
           allow="fullscreen"
