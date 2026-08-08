@@ -4,7 +4,7 @@ import Dashboard from './Dashboard';
 import './App.css';
 
 // Fake decoy — looks like a real boring internal system tool
-// Only dismissible via the invisible dot (bottom-right corner)
+// Close button is small, low contrast, at the very bottom
 function DecoyScreen({ onDismiss }) {
   return (
     <div className="decoy-overlay">
@@ -39,10 +39,22 @@ function DecoyScreen({ onDismiss }) {
             <div className="decoy-log">[INFO] 2026-08-08 01:13:30 — Node auth token refreshed</div>
             <div className="decoy-log">[DEBUG] 2026-08-08 01:13:10 — Config schema validated (v4.2)</div>
           </div>
+          <div className="decoy-section">
+            <p className="decoy-label">NETWORK TOPOLOGY</p>
+            <div className="decoy-row"><span>Primary Relay</span><span className="decoy-val">10.0.0.1 — Reachable</span></div>
+            <div className="decoy-row"><span>Secondary Relay</span><span className="decoy-val">10.0.0.2 — Reachable</span></div>
+            <div className="decoy-row"><span>DNS Resolution</span><span className="decoy-val ok">OK — 12ms</span></div>
+            <div className="decoy-row"><span>Last Heartbeat</span><span className="decoy-val">2026-08-08 01:14:21</span></div>
+          </div>
+        </div>
+
+        {/* Close button — very small, low contrast, bottom center, hard to notice */}
+        <div className="decoy-close-wrap">
+          <button className="decoy-close-btn" onClick={onDismiss}>
+            exit diagnostics
+          </button>
         </div>
       </div>
-      {/* Invisible dismiss dot — bottom right, completely invisible */}
-      <button className="decoy-dismiss-dot" onClick={onDismiss} aria-hidden="true" tabIndex={-1} />
     </div>
   );
 }
@@ -152,6 +164,10 @@ export default function App() {
         <div className="header-actions">
           <button className="icon-btn" title="Toggle theme" onClick={() => setDark(d => !d)}>
             {dark ? '☀' : '◑'}
+          </button>
+          {/* Panic button — labeled as boring system thing */}
+          <button className="panic-btn" onClick={() => setShowDecoy(true)}>
+            ⬡ Diagnostics
           </button>
           <button className="token-btn" onClick={() => { setShowDrawer(true); setDrawerError(''); setDrawerSuccess(false); }}>
             ⚙ Config
